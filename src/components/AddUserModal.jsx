@@ -57,16 +57,15 @@ const AddUserModal = ({ onClose }) => {
           <option value="" disabled>
             Selecciona un género
           </option>
-          <option value="muy macho!!">Muy macho!!</option>
           <option value="masculino">Masculino</option>
           <option value="femenino">Femenino</option>
           <option value="otro">Otro</option>
           <option value="prefiero_no_decirlo">Prefiero no decirlo</option>
         </select>
         <button type="submit">Agregar Usuario</button>
-        <button type="button" onClick={onClose}>
+        {/* <button type="button" onClick={onClose}>
           Cerrar
-        </button>
+        </button> */}
       </form>
     </div>
   );

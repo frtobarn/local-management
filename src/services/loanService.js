@@ -20,17 +20,17 @@ export const deleteUser = async (id) => {
   await db.users.delete(id);
 };
 
-export const addItem = async (name) => {
-  const id = await db.items.add({ name });
+export const addItem = async (name, code, status, type) => {
+  const id = await db.items.add({ name, code, status, type });
   return id;
 };
 
 export const getItems = async () => {
   const items = await db.items.toArray();
-  console.log("Items obtenidos: ");
-  items.map((item) => {
-    console.log(item.name, item.id);
-  });
+  // console.log("Items obtenidos: ");
+  // items.map((item) => {
+  //   console.log(item.name, item.id);
+  // });
   return items;
 };
 
