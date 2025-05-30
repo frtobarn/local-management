@@ -1,7 +1,9 @@
 import { useState } from "react";
-import { addUser } from "../services/loanService";
+import { addUser, getUsers } from "../services/loanService";
+import { useData } from "../context/DataContext";
 
 const AddUserModal = ({ onClose }) => {
+  const { updateUsers } = useData();
   const [name, setName] = useState("");
   const [dni, setDni] = useState("");
   const [age, setAge] = useState("");
@@ -10,6 +12,8 @@ const AddUserModal = ({ onClose }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     await addUser(name, dni, age, gender);
+    const updatedUsers = await getUsers();
+    updateUsers(updatedUsers);
     setName("");
     setDni("");
     setAge("");

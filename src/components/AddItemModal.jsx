@@ -1,7 +1,9 @@
 import { useState } from "react";
-import { addItem } from "../services/loanService";
+import { addItem, getItems } from "../services/loanService";
+import { useData } from "../context/DataContext";
 
 const AddItemModal = ({ onClose }) => {
+  const { updateItems } = useData();
   const [name, setName] = useState("");
   const [code, setCode] = useState("");
   const [status, setStatus] = useState("");
@@ -37,6 +39,8 @@ const AddItemModal = ({ onClose }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     await addItem(name, code, status, type);
+    const updatedItems = await getItems();
+    updateItems(updatedItems);
     setName("");
     setCode("");
     setStatus("");

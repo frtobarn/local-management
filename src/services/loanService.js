@@ -9,10 +9,6 @@ export const addUser = async (name, dni, age, genre) => {
 
 export const getUsers = async () => {
   const users = await db.users.toArray();
-  console.log("Usuarios obtenidos: ");
-  users.map((user) => {
-    console.log(user.id);
-  });
   return users;
 };
 
@@ -27,15 +23,10 @@ export const addItem = async (name, code, status, type) => {
 
 export const getItems = async () => {
   const items = await db.items.toArray();
-  // console.log("Items obtenidos: ");
-  // items.map((item) => {
-  //   console.log(item.name, item.id);
-  // });
   return items;
 };
 
 export const deleteItem = async (id) => {
-  console.log("Borrando " + id);
   await db.items.delete(id);
 };
 
@@ -43,38 +34,76 @@ export const deleteItem = async (id) => {
  *
  */
 export const addLoan = async (userId, itemId, duration) => {
+  // Primero verificamos que existan tanto el usuario como el elemento
+  const user = await db.users.get(Number(userId));
+  if (!user) {
+    throw new Error("Usuario no encontrado");
+  }
+
+  const item = await db.items.get(Number(itemId));
+  if (!item) {
+    throw new Error("Elemento no encontrado");
+  }
+
+  // Verificamos si el elemento ya está prestado
+  const activeItemLoans = await db.loans
+    .where('itemId')
+    .equals(Number(itemId))
+    .filter(loan => !loan.returned)
+    .toArray();
+
+  if (activeItemLoans.length > 0) {
+    throw new Error("Este elemento ya está prestado");
+  }
+
+  // Verificamos si el usuario ya tiene un préstamo activo
+  const activeUserLoans = await db.loans
+    .where('userId')
+    .equals(Number(userId))
+    .filter(loan => !loan.returned)
+    .toArray();
+
+  if (activeUserLoans.length > 0) {
+    throw new Error("Este usuario ya tiene un préstamo activo");
+  }
+
   const startTime = Date.now();
   const id = await db.loans.add({
-    userId,
-    itemId,
+    userId: Number(userId),
+    itemId: Number(itemId),
     startTime,
     duration,
     returned: false,
+    userName: user.name,
+    itemName: item.name
   });
+  
   return id;
 };
 
 export const getLoans = async () => {
   const loans = await db.loans.toArray();
-  console.log("Prestamos obtenidos: ");
-  loans.map((loan) => {
-    "++id, userId, itemId, startTime, duration, returned";
-    console.log(
-      "Prestamo " +
-        loan.id +
-        "| user: " +
-        loan.userId +
-        "| item: " +
-        loan.itemId +
-        "| startTime: " +
-        loan.startTime +
-        "| duration: " +
-        loan.duration +
-        "| returned: " +
-        loan.returned
-    );
-  });
-  return await db.loans.toArray();
+  
+  // Obtener detalles faltantes y ordenar por fecha más reciente
+  const loansWithDetails = await Promise.all(
+    loans.map(async (loan) => {
+      let loanWithDetails = loan;
+      
+      if (!loan.userName || !loan.itemName) {
+        const user = await db.users.get(Number(loan.userId));
+        const item = await db.items.get(Number(loan.itemId));
+        loanWithDetails = {
+          ...loan,
+          userName: user?.name || 'Usuario no encontrado',
+          itemName: item?.name || 'Elemento no encontrado'
+        };
+      }
+      return loanWithDetails;
+    })
+  );
+
+  // Ordenar préstamos por fecha más reciente primero
+  return loansWithDetails.sort((a, b) => b.startTime - a.startTime);
 };
 
 export const deleteLoan = async (id) => {

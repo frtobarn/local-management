@@ -7,18 +7,25 @@ const LoanTimer = ({ loan }) => {
   useEffect(() => {
     const interval = setInterval(() => {
       setTimeLeft(loan.duration - (Date.now() - loan.startTime));
-    }, 1000);
+    }, 60000); // Update every minute instead of every second
 
     return () => clearInterval(interval);
   }, [loan]);
 
-  useEffect(() => {
-    if (timeLeft <= 0) {
-      // Marcar préstamo como devuelto
+  const formatTime = (ms) => {
+    if (ms <= 0) return 'Tiempo agotado';
+    
+    const hours = Math.floor(ms / (1000 * 60 * 60));
+    const minutes = Math.floor((ms % (1000 * 60 * 60)) / (1000 * 60));
+    
+    if (hours === 0) {
+      return `${minutes} minutos`;
     }
-  }, [timeLeft]);
+    
+    return `${hours} horas ${minutes} minutos`;
+  };
 
-  return <span>{timeLeft > 0 ? `${Math.floor(timeLeft / 1000)}s` : 'Tiempo agotado'}</span>;
+  return <span>{formatTime(timeLeft)}</span>;
 };
 
 export default LoanTimer;
