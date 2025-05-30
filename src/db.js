@@ -5,7 +5,7 @@ export const db = new Dexie("MultiDB");
 
 // 👇 Incluye TODAS las tablas en un SOLO .version()
 db.version(1).stores({
-  users: "++id, name, &dni, age, genre, status", // &dni = único
+  users: "++id, name, &dni, age, genre, status, disability", // &dni = único + discapacidad
   items: "++id, name, &code, status, type",
   loans: "++id, userId, itemId, startTime, endTime, duration, returned",
 });
