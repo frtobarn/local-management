@@ -1,8 +1,10 @@
 //Componente de Cronómetro
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
 const LoanTimer = ({ loan }) => {
-  const [timeLeft, setTimeLeft] = useState(loan.duration - (Date.now() - loan.startTime));
+  const [timeLeft, setTimeLeft] = useState(
+    loan.duration - (Date.now() - loan.startTime)
+  );
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -13,16 +15,18 @@ const LoanTimer = ({ loan }) => {
   }, [loan]);
 
   const formatTime = (ms) => {
-    if (ms <= 0) return 'Tiempo agotado';
-    
+    if (ms <= 0) return "Tiempo agotado";
+
     const hours = Math.floor(ms / (1000 * 60 * 60));
     const minutes = Math.floor((ms % (1000 * 60 * 60)) / (1000 * 60));
-    
+
     if (hours === 0) {
       return `${minutes} minutos`;
     }
-    
-    return `${hours} horas ${minutes} minutos`;
+
+    return `${hours > 1 ? hours + " horas" : hours + " hora"}  ${
+      minutes > 1 ? minutes + " minutos" : minutes + " minuto"
+    } `;
   };
 
   return <span>{formatTime(timeLeft)}</span>;

@@ -21,7 +21,7 @@ const App = () => {
   const handleSplashComplete = () => {
     setTimeout(() => {
       setShowSplash(false);
-    }, 4000);
+    }, 3500);
   };
 
   return (

@@ -23,9 +23,13 @@ const SplashScreen = ({ onComplete }) => {
         <source src="/splash-sound.mp3" type="audio/mpeg" />
       </audio>
       {!isPlaying ? (
-        <button className="start-button" onClick={handleStart}>
-          Ingresar
-        </button>
+        <>  
+            <button className="start-button" onClick={handleStart}>
+            Ingresar
+            </button>
+            <br />
+            <p>Powered by UNAL</p>
+        </>
       ) : (
         <div className="logo-container">
           <span className="logo-text">

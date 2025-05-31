@@ -100,7 +100,7 @@ const LoanList = () => {
               <p>Elemento: {loan.itemName}</p>
               <p>Inicio: {new Date(loan.startTime).toLocaleString()}</p>
               <p>
-                Duración: {Math.round(loan.duration / (1000 * 60 * 60))} horas
+                Duración: {Math.round(loan.duration / (1000 * 60 * 60))} hora(s)
               </p>
               {!loan.returned && (
                 <p>
