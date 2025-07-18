@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useLoans } from '../context/LoanContext';
 import { useNavigate } from 'react-router-dom';
 import Barcode from 'react-barcode';
+import * as XLSX from 'xlsx';
 
 const getStartOf = (date, mode) => {
   // Crear fecha local a partir de yyyy-mm-dd
@@ -41,6 +42,24 @@ const Reportes = () => {
 
   const filteredLoans = loans.filter(loan => loan.startTime >= start && loan.startTime < end);
 
+  const exportToExcel = () => {
+    const dataToExport = filteredLoans.map(loan => ({
+      'Usuario': loan.userName,
+      'Elemento': loan.itemName,
+      'Placa': loan.itemCode || '',
+      'Fecha': new Date(loan.startTime).toLocaleString(),
+      'Duración (h)': Math.round(loan.duration / (1000 * 60 * 60)),
+      'Estado': loan.returned ? 'Devuelto' : 'Pendiente'
+    }));
+
+    const ws = XLSX.utils.json_to_sheet(dataToExport);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Reporte Préstamos');
+    
+    const fileName = `reporte_prestamos_${selectedDate}_${filter}.xlsx`;
+    XLSX.writeFile(wb, fileName);
+  };
+
   return (
     <div style={{ padding: '2rem', maxWidth: 900, margin: '0 auto' }}>
       <button onClick={() => navigate('/')} style={{ marginBottom: '1rem', padding: '0.4rem 1.2rem', borderRadius: 6, border: '1px solid #bbb', background: '#f5f7fa', cursor: 'pointer' }}>← Volver</button>
@@ -56,6 +75,20 @@ const Reportes = () => {
           <input type="radio" name="filter" value="month" checked={filter === 'month'} onChange={() => setFilter('month')} /> Mes
         </label>
         <input type="date" value={selectedDate} onChange={e => setSelectedDate(e.target.value)} />
+        <button 
+          onClick={exportToExcel}
+          style={{ 
+            padding: '0.4rem 1.2rem', 
+            borderRadius: 6, 
+            border: '1px solid #4CAF50', 
+            background: '#4CAF50', 
+            color: 'white',
+            cursor: 'pointer',
+            fontSize: '0.9em'
+          }}
+        >
+          📊 Exportar Excel
+        </button>
       </div>
       <div style={{ overflowX: 'auto' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse', background: '#fff' }}>
