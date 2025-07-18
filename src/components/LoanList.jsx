@@ -7,6 +7,13 @@ import LoanTimer from "./LoanTimer";
 const LoanList = () => {
   const { loans, setLoans } = useLoans();
   const [filter, setFilter] = useState("all"); // "all", "active", "unreturned"
+  const [tick, setTick] = useState(0); // Para forzar render
+
+  // Forzar render cada 30 segundos para actualizar vencidos
+  useEffect(() => {
+    const interval = setInterval(() => setTick(t => t + 1), 30000);
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     const fetchLoans = async () => {
