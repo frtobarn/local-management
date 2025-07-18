@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useLoans } from '../context/LoanContext';
 import { useNavigate } from 'react-router-dom';
+import Barcode from 'react-barcode';
 
 const getStartOf = (date, mode) => {
   // Crear fecha local a partir de yyyy-mm-dd
@@ -76,7 +77,11 @@ const Reportes = () => {
                 <tr key={loan.id} style={{ background: idx % 2 === 0 ? '#f9fbfd' : '#eaf0f6' }}>
                   <td style={{ padding: '0.4rem', border: '1px solid #eee' }}>{loan.userName}</td>
                   <td style={{ padding: '0.4rem', border: '1px solid #eee' }}>{loan.itemName}</td>
-                  <td style={{ padding: '0.4rem', border: '1px solid #eee' }}>{loan.itemCode || ''}</td>
+                  <td style={{ padding: '0.4rem', border: '1px solid #eee' }}>
+                    {loan.itemCode ? (
+                      <Barcode value={loan.itemCode} width={1.2} height={32} fontSize={12} margin={0} displayValue={true} />
+                    ) : ''}
+                  </td>
                   <td style={{ padding: '0.4rem', border: '1px solid #eee' }}>{new Date(loan.startTime).toLocaleString()}</td>
                   <td style={{ padding: '0.4rem', border: '1px solid #eee' }}>{Math.round(loan.duration / (1000 * 60 * 60))}</td>
                   <td style={{ padding: '0.4rem', border: '1px solid #eee' }}>{loan.returned ? 'Devuelto' : 'Pendiente'}</td>
