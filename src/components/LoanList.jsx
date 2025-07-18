@@ -54,6 +54,27 @@ const LoanList = () => {
     }
   };
 
+  const handleRenew = async (loan) => {
+    const extra = window.prompt('¿Cuántas horas deseas agregar al préstamo?', '1');
+    const extraHours = parseFloat(extra);
+    if (isNaN(extraHours) || extraHours <= 0) {
+      alert('Por favor ingresa un número válido de horas.');
+      return;
+    }
+    const extraMs = extraHours * 60 * 60 * 1000;
+    try {
+      await updateLoan(loan.id, false, loan.duration + extraMs);
+      setLoans((prevLoans) =>
+        prevLoans.map((l) =>
+          l.id === loan.id ? { ...l, duration: l.duration + extraMs } : l
+        )
+      );
+    } catch (error) {
+      console.error('Error al renovar el préstamo:', error);
+      alert('Hubo un problema al renovar el préstamo. Intenta nuevamente.');
+    }
+  };
+
   const confirmDelete = (id) => {
     if (window.confirm("¿Estás seguro de que deseas eliminar este préstamo?")) {
       handleDelete(id);
@@ -116,12 +137,12 @@ const LoanList = () => {
             >
               <span className="loan-col user">{loan.userName}</span>
               <span className="loan-col item">{loan.itemName}</span>
-              <span className="loan-col date">{new Date(loan.startTime).toLocaleString()}</span>
+              <span className="loan-col date">{new Date(loan.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
               <span className="loan-col duration">{Math.round(loan.duration / (1000 * 60 * 60))}h</span>
               <span className="loan-col status">
                 {!loan.returned ? (
                   <>
-                    <span>Restante: <LoanTimer loan={loan} /></span>
+                    <span>Restante: <LoanTimer key={loan.id + '-' + loan.duration + '-' + loan.startTime} loan={loan} /></span>
                   </>
                 ) : (
                   <span>Devuelto</span>
@@ -129,9 +150,14 @@ const LoanList = () => {
               </span>
               <span className="loan-col actions">
                 {!loan.returned && (
-                  <button onClick={() => handleReturn(loan.id)}>
-                    Registrar Devolución
-                  </button>
+                  <>
+                    <button onClick={() => handleReturn(loan.id)}>
+                      Registrar Devolución
+                    </button>
+                    <button onClick={() => handleRenew(loan)}>
+                      Renovar
+                    </button>
+                  </>
                 )}
                 <button onClick={() => confirmDelete(loan.id)}>Eliminar</button>
               </span>

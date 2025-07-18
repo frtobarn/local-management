@@ -110,11 +110,15 @@ export const deleteLoan = async (id) => {
   await db.loans.delete(id);
 };
 
-export const updateLoan = async (id, returned) => {
-  const endTime = Date.now();
-  const updated = await db.loans.update(id, {
-    endTime,
-    returned: true,
-  });
+export const updateLoan = async (id, returned, newDuration) => {
+  const updateObj = {};
+  if (returned) {
+    updateObj.endTime = Date.now();
+    updateObj.returned = true;
+  }
+  if (typeof newDuration === 'number') {
+    updateObj.duration = newDuration;
+  }
+  const updated = await db.loans.update(id, updateObj);
   return updated;
 };

@@ -3,12 +3,14 @@ import { useLoans } from '../context/LoanContext';
 import { useNavigate } from 'react-router-dom';
 
 const getStartOf = (date, mode) => {
-  const d = new Date(date);
+  // Crear fecha local a partir de yyyy-mm-dd
+  const [year, month, day] = date.split('-').map(Number);
+  const d = new Date(year, month - 1, day);
   if (mode === 'day') {
     d.setHours(0, 0, 0, 0);
   } else if (mode === 'week') {
-    const day = d.getDay();
-    const diff = d.getDate() - day + (day === 0 ? -6 : 1); // Lunes como inicio de semana
+    const dayOfWeek = d.getDay();
+    const diff = d.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1); // Lunes como inicio de semana
     d.setDate(diff);
     d.setHours(0, 0, 0, 0);
   } else if (mode === 'month') {
