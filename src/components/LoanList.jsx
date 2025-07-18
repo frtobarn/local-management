@@ -16,6 +16,13 @@ const LoanList = () => {
     fetchLoans();
   }, [setLoans]);
 
+  // Filtrar préstamos del día actual
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const tomorrow = new Date(today);
+  tomorrow.setDate(today.getDate() + 1);
+  const loansToday = loans.filter(loan => loan.startTime >= today.getTime() && loan.startTime < tomorrow.getTime());
+
   const handleDelete = async (id) => {
     try {
       await deleteLoan(id);
@@ -46,7 +53,7 @@ const LoanList = () => {
     }
   };
 
-  const filteredLoans = loans.filter((loan) => {
+  const filteredLoans = loansToday.filter((loan) => {
     switch (filter) {
       case "active":
         return !loan.returned && Date.now() < loan.startTime + loan.duration;
@@ -93,32 +100,37 @@ const LoanList = () => {
         </label>
       </div>
       <ul>
-        {filteredLoans.map((loan) => (
-          <li key={loan.id} className={`loan-item ${loan.returned ? 'returned' : ''}`}>
-            <div>
-              <p>Usuario: {loan.userName}</p>
-              <p>Elemento: {loan.itemName}</p>
-              <p>Inicio: {new Date(loan.startTime).toLocaleString()}</p>
-              <p>
-                Duración: {Math.round(loan.duration / (1000 * 60 * 60))} hora(s)
-              </p>
-              {!loan.returned && (
-                <p>
-                  Tiempo restante: <LoanTimer loan={loan} />
-                </p>
-              )}
-              {loan.returned && <p>Estado: Devuelto</p>}
-            </div>
-            <div>
-              {!loan.returned && (
-                <button onClick={() => handleReturn(loan.id)}>
-                  Registrar Devolución
-                </button>
-              )}
-              <button onClick={() => confirmDelete(loan.id)}>Eliminar</button>
-            </div>
-          </li>
-        ))}
+        {filteredLoans.map((loan, idx) => {
+          const isOverdue = !loan.returned && Date.now() >= loan.startTime + loan.duration;
+          return (
+            <li
+              key={loan.id}
+              className={`loan-item-row ${loan.returned ? 'returned' : ''} ${isOverdue ? 'overdue' : ''} ${idx % 2 === 0 ? 'even' : 'odd'}`}
+            >
+              <span className="loan-col user">{loan.userName}</span>
+              <span className="loan-col item">{loan.itemName}</span>
+              <span className="loan-col date">{new Date(loan.startTime).toLocaleString()}</span>
+              <span className="loan-col duration">{Math.round(loan.duration / (1000 * 60 * 60))}h</span>
+              <span className="loan-col status">
+                {!loan.returned ? (
+                  <>
+                    <span>Restante: <LoanTimer loan={loan} /></span>
+                  </>
+                ) : (
+                  <span>Devuelto</span>
+                )}
+              </span>
+              <span className="loan-col actions">
+                {!loan.returned && (
+                  <button onClick={() => handleReturn(loan.id)}>
+                    Registrar Devolución
+                  </button>
+                )}
+                <button onClick={() => confirmDelete(loan.id)}>Eliminar</button>
+              </span>
+            </li>
+          );
+        })}
       </ul>
     </div>
   );

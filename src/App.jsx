@@ -9,11 +9,16 @@ import AddItemModal from './components/AddItemModal';
 import AddUserModal from './components/AddUserModal';
 import { DataProvider } from './context/DataContext';
 import SplashScreen from './components/SplashScreen';
+import { useNavigate } from 'react-router-dom';
 
 const App = () => {
   const [isUserModalOpen, setIsUserModalOpen] = useState(false);
   const [isItemModalOpen, setIsItemModalOpen] = useState(false);
-  const [showSplash, setShowSplash] = useState(true);
+  const [showSplash, setShowSplash] = useState(() => {
+    // Solo mostrar splash si no se ha mostrado antes en esta sesión
+    return sessionStorage.getItem('splashShown') !== 'true';
+  });
+  const navigate = useNavigate();
   
   useLoadLoans();
   useSyncLoans();
@@ -21,6 +26,7 @@ const App = () => {
   const handleSplashComplete = () => {
     setTimeout(() => {
       setShowSplash(false);
+      sessionStorage.setItem('splashShown', 'true');
     }, 3500);
   };
 
@@ -33,6 +39,7 @@ const App = () => {
           <div>
             <button onClick={() => setIsUserModalOpen(true)}>Agregar Usuario</button>
             <button onClick={() => setIsItemModalOpen(true)}>Agregar Elemento</button>
+            <button onClick={() => navigate('/reportes')}>Reportes</button>
           </div>
           <LoanForm />
           <LoanList />

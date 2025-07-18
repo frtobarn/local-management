@@ -27,4 +27,67 @@
     font-size: 16px;
     cursor: pointer;
   }
+
+/* LoanList row styles */
+.loan-item-row {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.2rem;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+  margin-bottom: 0.25rem;
+  font-size: 0.97rem;
+  background: #fafbfc;
+  transition: box-shadow 0.2s, background 0.2s;
+  width: 100%;
+  box-sizing: border-box;
+  overflow-x: auto;
+}
+.loan-item-row.even {
+  background: #f5f7fa;
+}
+.loan-item-row.odd {
+  background: #eaf0f6;
+}
+.loan-item-row:hover {
+  box-shadow: 0 2px 8px 0 #0001;
+  background: #f0f4fa;
+}
+.loan-item-row.returned {
+  opacity: 0.6;
+}
+.loan-item-row.overdue {
+  background: #ffeaea !important;
+  border-color: #ff6b6b;
+  color: #b10000;
+  font-weight: bold;
+}
+.loan-col {
+  flex: 1 1 0;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 0 0.1rem;
+}
+.loan-col.user { flex: 1.1; }
+.loan-col.item { flex: 1.1; }
+.loan-col.date { flex: 1.3; }
+.loan-col.duration { flex: 0.6; }
+.loan-col.status { flex: 1; }
+.loan-col.actions { flex: 0.9; display: flex; gap: 0.3rem; }
+
+/* Optional: Make buttons smaller */
+.loan-col.actions button {
+  font-size: 0.93em;
+  padding: 0.15em 0.5em;
+}
+
+/* Asegura que la lista no tenga padding/margen extra */
+ul {
+  padding-left: 0;
+  margin-left: 0;
+  margin-right: 0;
+}
   
