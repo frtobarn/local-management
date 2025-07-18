@@ -247,4 +247,49 @@
 .content.hidden {
   opacity: 0;
 }
+
+/* Marca de desarrollador en SplashScreen */
+.dev-brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5em;
+  margin-top: 1.2em;
+  font-family: 'Segoe UI', 'Arial', sans-serif;
+  font-size: 1.1em;
+  letter-spacing: 0.04em;
+  font-weight: 500;
+  opacity: 0.85;
+}
+.brand-powered {
+  color: #888;
+  font-weight: 400;
+}
+.brand-unal {
+  color: #006400;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-shadow: 0 1px 6px #b6ffb6;
+  font-size: 1.18em;
+  text-transform: uppercase;
+}
+
+.dev-brand.splash-footer {
+  position: fixed;
+  left: 50%;
+  bottom: 2.5vh;
+  transform: translateX(-50%);
+  z-index: 10000;
+  background: rgba(255,255,255,0.85);
+  border-radius: 18px;
+  padding: 0.3em 1.1em;
+  box-shadow: 0 2px 12px #0001;
+  text-decoration: none;
+  transition: background 0.2s, box-shadow 0.2s;
+}
+.dev-brand.splash-footer:hover {
+  background: #eaf0f6;
+  box-shadow: 0 4px 18px #0002;
+  text-decoration: none;
+}
   

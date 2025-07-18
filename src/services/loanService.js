@@ -88,14 +88,15 @@ export const getLoans = async () => {
   const loansWithDetails = await Promise.all(
     loans.map(async (loan) => {
       let loanWithDetails = loan;
-      
-      if (!loan.userName || !loan.itemName) {
+      let itemCode = loan.itemCode;
+      if (!loan.userName || !loan.itemName || !loan.itemCode) {
         const user = await db.users.get(Number(loan.userId));
         const item = await db.items.get(Number(loan.itemId));
         loanWithDetails = {
           ...loan,
           userName: user?.name || 'Usuario no encontrado',
-          itemName: item?.name || 'Elemento no encontrado'
+          itemName: item?.name || 'Elemento no encontrado',
+          itemCode: item?.code || '',
         };
       }
       return loanWithDetails;

@@ -28,7 +28,6 @@ const SplashScreen = ({ onComplete }) => {
             Ingresar
             </button>
             <br />
-            <p>Powered by UNAL</p>
         </>
       ) : (
         <div className="logo-container">
@@ -39,6 +38,15 @@ const SplashScreen = ({ onComplete }) => {
           </span>
         </div>
       )}
+      <a
+        className="dev-brand splash-footer"
+        href="https://github.com/frtobarn"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <span className="brand-powered">Powered by</span>
+        <span className="brand-unal">UNAL</span>
+      </a>
     </div>
   );
 };
