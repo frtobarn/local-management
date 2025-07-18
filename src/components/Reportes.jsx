@@ -3,6 +3,8 @@ import { useLoans } from '../context/LoanContext';
 import { useNavigate } from 'react-router-dom';
 import Barcode from 'react-barcode';
 import * as XLSX from 'xlsx';
+import { getLoans } from '../services/loanService';
+import { updateLoan } from '../services/loanService';
 
 const getStartOf = (date, mode) => {
   // Crear fecha local a partir de yyyy-mm-dd
@@ -23,7 +25,7 @@ const getStartOf = (date, mode) => {
 };
 
 const Reportes = () => {
-  const { loans, deleteLoan } = useLoans();
+  const { loans, setLoans, deleteLoan } = useLoans();
   const [filter, setFilter] = useState('day');
   const [selectedDate, setSelectedDate] = useState(() => new Date().toISOString().slice(0, 10));
   const [showCleanModal, setShowCleanModal] = useState(false);
@@ -95,12 +97,29 @@ const Reportes = () => {
         setCleanStartDate('');
         setCleanEndDate('');
         
-        // Recargar la lista de préstamos
-        window.location.reload();
+        // Recargar los datos del contexto sin recargar la página
+        const updatedLoans = await getLoans();
+        setLoans(updatedLoans);
       } catch (error) {
         console.error('Error al eliminar préstamos:', error);
         alert('Hubo un error al eliminar los préstamos. Intenta nuevamente.');
       }
+    }
+  };
+
+  const handleStatusChange = async (loanId, newStatus) => {
+    try {
+      // Actualizar en la base de datos
+      await updateLoan(loanId, newStatus);
+      
+      // Actualizar el contexto
+      const updatedLoans = await getLoans();
+      setLoans(updatedLoans);
+      
+      console.log(`✅ Préstamo ${loanId} marcado como ${newStatus ? 'devuelto' : 'pendiente'}`);
+    } catch (error) {
+      console.error('Error al cambiar el estado del préstamo:', error);
+      alert('Hubo un error al cambiar el estado del préstamo. Intenta nuevamente.');
     }
   };
 
@@ -174,11 +193,12 @@ const Reportes = () => {
               <th style={{ padding: '0.5rem', border: '1px solid #eee' }}>Fecha</th>
               <th style={{ padding: '0.5rem', border: '1px solid #eee' }}>Duración (h)</th>
               <th style={{ padding: '0.5rem', border: '1px solid #eee' }}>Estado</th>
+              <th style={{ padding: '0.5rem', border: '1px solid #eee' }}>Acciones</th>
             </tr>
           </thead>
           <tbody>
             {filteredLoans.length === 0 ? (
-              <tr><td colSpan={7} style={{ textAlign: 'center', padding: '1rem' }}>No hay préstamos en este periodo.</td></tr>
+              <tr><td colSpan={8} style={{ textAlign: 'center', padding: '1rem' }}>No hay préstamos en este periodo.</td></tr>
             ) : (
               filteredLoans.map((loan, idx) => (
                 <tr key={loan.id} style={{ background: idx % 2 === 0 ? '#f9fbfd' : '#eaf0f6' }}>
@@ -193,6 +213,21 @@ const Reportes = () => {
                   <td style={{ padding: '0.4rem', border: '1px solid #eee' }}>{new Date(loan.startTime).toLocaleString()}</td>
                   <td style={{ padding: '0.4rem', border: '1px solid #eee' }}>{Math.round(loan.duration / (1000 * 60 * 60))}</td>
                   <td style={{ padding: '0.4rem', border: '1px solid #eee' }}>{loan.returned ? 'Devuelto' : 'Pendiente'}</td>
+                  <td style={{ padding: '0.4rem', border: '1px solid #eee' }}>
+                    <select 
+                      value={loan.returned ? 'returned' : 'pending'}
+                      onChange={(e) => handleStatusChange(loan.id, e.target.value === 'returned')}
+                      style={{ 
+                        padding: '0.2rem', 
+                        fontSize: '0.8em',
+                        borderRadius: '3px',
+                        border: '1px solid #ccc'
+                      }}
+                    >
+                      <option value="pending">Pendiente</option>
+                      <option value="returned">Devuelto</option>
+                    </select>
+                  </td>
                 </tr>
               ))
             )}

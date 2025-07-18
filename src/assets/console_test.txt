@@ -1,0 +1,185 @@
+// Función para crear préstamos de prueba
+async function crearPrestamosPrueba() {
+  const { db } = await import('./src/db.js');
+  
+  // Obtener usuarios e items existentes
+  const usuarios = await db.users.toArray();
+  const items = await db.items.toArray();
+  
+  if (usuarios.length === 0 || items.length === 0) {
+    console.log('❌ Necesitas tener al menos un usuario y un item creados');
+    return;
+  }
+  
+  // Crear préstamos de ayer
+  const ayer = new Date();
+  ayer.setDate(ayer.getDate() - 1);
+  ayer.setHours(10, 30, 0, 0); // 10:30 AM de ayer
+  
+  const prestamosAyer = [
+    {
+      userId: usuarios[0].id,
+      itemId: items[0].id,
+      startTime: ayer.getTime(),
+      duration: 2 * 60 * 60 * 1000, // 2 horas
+      returned: false,
+      userName: usuarios[0].name,
+      itemName: items[0].name,
+      itemCode: items[0].code
+    },
+    {
+      userId: usuarios[0].id,
+      itemId: items[0].id,
+      startTime: ayer.getTime() + (3 * 60 * 60 * 1000), // 3 horas después
+      duration: 1 * 60 * 60 * 1000, // 1 hora
+      returned: true,
+      userName: usuarios[0].name,
+      itemName: items[0].name,
+      itemCode: items[0].code
+    }
+  ];
+  
+  // Crear préstamos de hace 2 días
+  const hace2Dias = new Date();
+  hace2Dias.setDate(hace2Dias.getDate() - 2);
+  hace2Dias.setHours(14, 0, 0, 0); // 2:00 PM hace 2 días
+  
+  const prestamosHace2Dias = [
+    {
+      userId: usuarios[0].id,
+      itemId: items[0].id,
+      startTime: hace2Dias.getTime(),
+      duration: 3 * 60 * 60 * 1000, // 3 horas
+      returned: false,
+      userName: usuarios[0].name,
+      itemName: items[0].name,
+      itemCode: items[0].code
+    }
+  ];
+  
+  // Insertar todos los préstamos
+  const todosLosPrestamos = [...prestamosAyer, ...prestamosHace2Dias];
+  
+  for (const prestamo of todosLosPrestamos) {
+    await db.loans.add(prestamo);
+  }
+  
+  console.log('✅ Se crearon', todosLosPrestamos.length, 'préstamos de prueba');
+  console.log('📅 Préstamos de ayer:', prestamosAyer.length);
+  console.log('�� Préstamos de hace 2 días:', prestamosHace2Dias.length);
+  
+  // Recargar la página para ver los cambios
+  window.location.reload();
+}
+
+// Ejecutar la función
+crearPrestamosPrueba();
+
+
+//============================================================================
+//============================================================================
+//============================================================================
+//============================================================================
+
+
+
+
+// Función para crear préstamos de prueba de meses anteriores
+async function crearPrestamosMesesAnteriores() {
+  const { db } = await import('./src/db.js');
+  
+  // Obtener usuarios e items existentes
+  const usuarios = await db.users.toArray();
+  const items = await db.items.toArray();
+  
+  if (usuarios.length === 0 || items.length === 0) {
+    console.log('❌ Necesitas tener al menos un usuario y un item creados');
+    return;
+  }
+  
+  // Mes pasado (hace 1 mes)
+  const mesPasado = new Date();
+  mesPasado.setMonth(mesPasado.getMonth() - 1);
+  mesPasado.setDate(15); // Día 15 del mes pasado
+  mesPasado.setHours(9, 0, 0, 0); // 9:00 AM
+  
+  const prestamosMesPasado = [
+    {
+      userId: usuarios[0].id,
+      itemId: items[0].id,
+      startTime: mesPasado.getTime(),
+      duration: 2 * 60 * 60 * 1000, // 2 horas
+      returned: true,
+      userName: usuarios[0].name,
+      itemName: items[0].name,
+      itemCode: items[0].code
+    },
+    {
+      userId: usuarios[0].id,
+      itemId: items[0].id,
+      startTime: mesPasado.getTime() + (24 * 60 * 60 * 1000), // 1 día después
+      duration: 1 * 60 * 60 * 1000, // 1 hora
+      returned: false,
+      userName: usuarios[0].name,
+      itemName: items[0].name,
+      itemCode: items[0].code
+    },
+    {
+      userId: usuarios[0].id,
+      itemId: items[0].id,
+      startTime: mesPasado.getTime() + (7 * 24 * 60 * 60 * 1000), // 1 semana después
+      duration: 3 * 60 * 60 * 1000, // 3 horas
+      returned: true,
+      userName: usuarios[0].name,
+      itemName: items[0].name,
+      itemCode: items[0].code
+    }
+  ];
+  
+  // Mes antepasado (hace 2 meses)
+  const mesAntepasado = new Date();
+  mesAntepasado.setMonth(mesAntepasado.getMonth() - 2);
+  mesAntepasado.setDate(10); // Día 10 del mes antepasado
+  mesAntepasado.setHours(14, 30, 0, 0); // 2:30 PM
+  
+  const prestamosMesAntepasado = [
+    {
+      userId: usuarios[0].id,
+      itemId: items[0].id,
+      startTime: mesAntepasado.getTime(),
+      duration: 4 * 60 * 60 * 1000, // 4 horas
+      returned: true,
+      userName: usuarios[0].name,
+      itemName: items[0].name,
+      itemCode: items[0].code
+    },
+    {
+      userId: usuarios[0].id,
+      itemId: items[0].id,
+      startTime: mesAntepasado.getTime() + (3 * 24 * 60 * 60 * 1000), // 3 días después
+      duration: 2 * 60 * 60 * 1000, // 2 horas
+      returned: false,
+      userName: usuarios[0].name,
+      itemName: items[0].name,
+      itemCode: items[0].code
+    }
+  ];
+  
+  // Insertar todos los préstamos
+  const todosLosPrestamos = [...prestamosMesPasado, ...prestamosMesAntepasado];
+  
+  for (const prestamo of todosLosPrestamos) {
+    await db.loans.add(prestamo);
+  }
+  
+  console.log('✅ Se crearon', todosLosPrestamos.length, 'préstamos de prueba');
+  console.log('📅 Préstamos del mes pasado:', prestamosMesPasado.length);
+  console.log('📅 Préstamos del mes antepasado:', prestamosMesAntepasado.length);
+  console.log('�� Total de préstamos en BD:', await db.loans.count());
+  
+  // Recargar la página para ver los cambios
+  window.location.reload();
+}
+
+// Ejecutar la función
+crearPrestamosMesesAnteriores();
