@@ -77,7 +77,7 @@ export const addLoan = async (userId, itemId, duration) => {
     throw new Error("Este usuario ya tiene un préstamo activo");
   }
 
-  const startTime = Date.now();
+  const startTime = new Date().getTime(); // Usar hora local en lugar de UTC
   const id = await db.loans.add({
     userId: Number(userId),
     itemId: Number(itemId),

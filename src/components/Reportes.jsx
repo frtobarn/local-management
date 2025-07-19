@@ -9,25 +9,36 @@ import { updateLoan } from '../services/loanService';
 const getStartOf = (date, mode) => {
   // Crear fecha local a partir de yyyy-mm-dd
   const [year, month, day] = date.split('-').map(Number);
-  const d = new Date(year, month - 1, day);
+  
+  // Crear fecha en zona horaria local (sin ajustes UTC)
+  const localDate = new Date(year, month - 1, day);
+  
   if (mode === 'day') {
-    d.setHours(0, 0, 0, 0);
+    localDate.setHours(0, 0, 0, 0);
   } else if (mode === 'week') {
-    const dayOfWeek = d.getDay();
-    const diff = d.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1); // Lunes como inicio de semana
-    d.setDate(diff);
-    d.setHours(0, 0, 0, 0);
+    const dayOfWeek = localDate.getDay();
+    const diff = localDate.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1); // Lunes como inicio de semana
+    localDate.setDate(diff);
+    localDate.setHours(0, 0, 0, 0);
   } else if (mode === 'month') {
-    d.setDate(1);
-    d.setHours(0, 0, 0, 0);
+    localDate.setDate(1);
+    localDate.setHours(0, 0, 0, 0);
   }
-  return d.getTime();
+  
+  return localDate.getTime();
 };
 
 const Reportes = () => {
   const { loans, setLoans, deleteLoan } = useLoans();
   const [filter, setFilter] = useState('day');
-  const [selectedDate, setSelectedDate] = useState(() => new Date().toISOString().slice(0, 10));
+  const [selectedDate, setSelectedDate] = useState(() => {
+    // Usar fecha local en lugar de UTC
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  });
   const [showCleanModal, setShowCleanModal] = useState(false);
   const [cleanStartDate, setCleanStartDate] = useState('');
   const [cleanEndDate, setCleanEndDate] = useState('');
@@ -44,6 +55,15 @@ const Reportes = () => {
     d.setMonth(d.getMonth() + 1);
     end = d.getTime();
   }
+
+  // Debug temporal para ver las fechas
+  console.log('🔍 Debug fechas:', {
+    selectedDate,
+    start: new Date(start).toLocaleString(),
+    end: new Date(end).toLocaleString(),
+    startTimestamp: start,
+    endTimestamp: end
+  });
 
   const filteredLoans = loans.filter(loan => loan.startTime >= start && loan.startTime < end);
 
@@ -71,6 +91,7 @@ const Reportes = () => {
       return;
     }
 
+    // Usar hora local para las fechas de limpieza
     const start = new Date(cleanStartDate).getTime();
     const end = new Date(cleanEndDate).getTime() + (24 * 60 * 60 * 1000); // Incluir todo el día final
 
