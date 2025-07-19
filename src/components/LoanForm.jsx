@@ -80,23 +80,63 @@ const LoanForm = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="loan-form">
-      {error && <div className="error-message">{error}</div>}
+    <form onSubmit={handleSubmit} style={{
+      background: 'white',
+      padding: '2rem',
+      borderRadius: '12px',
+      boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+      marginBottom: '2rem',
+      border: '1px solid #f0f0f0'
+    }}>
+      {error && <div style={{
+        background: '#fee',
+        color: '#c33',
+        padding: '0.8rem',
+        borderRadius: '6px',
+        marginBottom: '1rem',
+        border: '1px solid #fcc'
+      }}>{error}</div>}
       
-      <div className="autocomplete-container">
+      <div style={{ marginBottom: '1rem' }}>
         <input
           type="text"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           placeholder="Buscar usuario por nombre o documento"
           required
+          style={{
+            width: '100%',
+            padding: '0.8rem',
+            fontSize: '1rem',
+            borderRadius: '8px',
+            border: '1px solid #ddd',
+            boxSizing: 'border-box'
+          }}
         />
         {showUsersList && filteredUsers.length > 0 && (
-          <ul className="autocomplete-list">
+          <ul style={{
+            listStyle: 'none',
+            padding: 0,
+            margin: '0.5rem 0',
+            border: '1px solid #ddd',
+            borderRadius: '6px',
+            maxHeight: '200px',
+            overflowY: 'auto',
+            background: 'white',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+          }}>
             {filteredUsers.map((user) => (
               <li
                 key={user.id}
                 onClick={() => handleUserSelect(user)}
+                style={{
+                  padding: '0.8rem',
+                  cursor: 'pointer',
+                  borderBottom: '1px solid #f0f0f0',
+                  transition: 'background-color 0.2s'
+                }}
+                onMouseEnter={(e) => e.target.style.backgroundColor = '#f8f9fa'}
+                onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
               >
                 {user.name} - {user.dni}
               </li>
@@ -105,28 +145,74 @@ const LoanForm = () => {
         )}
       </div>
 
-      <select
-        value={itemId}
-        onChange={(e) => setItemId(e.target.value)}
-        required
-      >
-        <option value="">Seleccionar Elemento</option>
-        {items.map((item) => (
-          <option key={item.id} value={item.id}>
-            {item.name}
-          </option>
-        ))}
-      </select>
+      <div style={{ marginBottom: '1rem' }}>
+        <select
+          value={itemId}
+          onChange={(e) => setItemId(e.target.value)}
+          required
+          style={{
+            width: '100%',
+            padding: '0.8rem',
+            fontSize: '1rem',
+            borderRadius: '8px',
+            border: '1px solid #ddd',
+            boxSizing: 'border-box'
+          }}
+        >
+          <option value="">Seleccionar Elemento</option>
+          {items.map((item) => (
+            <option key={item.id} value={item.id}>
+              {item.name}
+            </option>
+          ))}
+        </select>
+      </div>
 
-      <input
-        type="number"
-        value={duration}
-        onChange={(e) => setDuration(Number(e.target.value))}
-        min="1"
-        placeholder="Duración (horas)"
-        required
-      />
-      <button type="submit">Registrar Préstamo</button>
+      <div style={{ marginBottom: '1rem' }}>
+        <input
+          type="number"
+          value={duration}
+          onChange={(e) => setDuration(Number(e.target.value))}
+          min="1"
+          placeholder="Duración (horas)"
+          required
+          style={{
+            width: '100%',
+            padding: '0.8rem',
+            fontSize: '1rem',
+            borderRadius: '8px',
+            border: '1px solid #ddd',
+            boxSizing: 'border-box'
+          }}
+        />
+      </div>
+      <button 
+        type="submit"
+        style={{
+          width: '100%',
+          padding: '0.8rem 1.5rem',
+          fontSize: '1rem',
+          fontWeight: '600',
+          borderRadius: '8px',
+          border: 'none',
+          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          color: 'white',
+          cursor: 'pointer',
+          transition: 'all 0.3s ease',
+          boxShadow: '0 4px 15px rgba(102, 126, 234, 0.3)',
+          marginTop: '0.5rem'
+        }}
+        onMouseEnter={(e) => {
+          e.target.style.transform = 'translateY(-2px)';
+          e.target.style.boxShadow = '0 6px 20px rgba(102, 126, 234, 0.4)';
+        }}
+        onMouseLeave={(e) => {
+          e.target.style.transform = 'translateY(0)';
+          e.target.style.boxShadow = '0 4px 15px rgba(102, 126, 234, 0.3)';
+        }}
+      >
+        📝 Registrar Préstamo
+      </button>
     </form>
   );
 };
