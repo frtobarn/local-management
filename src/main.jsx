@@ -8,6 +8,8 @@ import { LoanProvider } from './context/LoanContext';
 import './App.css';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Reportes from './components/Reportes';
+import UsersList from './components/UsersList';
+import ItemsList from './components/ItemsList';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -16,6 +18,8 @@ createRoot(document.getElementById('root')).render(
         <Routes>
           <Route path="/" element={<App />} />
           <Route path="/reportes" element={<Reportes />} />
+          <Route path="/users" element={<UsersList />} />
+          <Route path="/items" element={<ItemsList />} />
         </Routes>
       </BrowserRouter>
     </LoanProvider>

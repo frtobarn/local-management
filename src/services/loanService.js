@@ -30,6 +30,16 @@ export const deleteItem = async (id) => {
   await db.items.delete(id);
 };
 
+export const updateUser = async (id, userData) => {
+  const updated = await db.users.update(id, userData);
+  return updated;
+};
+
+export const updateItem = async (id, itemData) => {
+  const updated = await db.items.update(id, itemData);
+  return updated;
+};
+
 /*
  *
  */
