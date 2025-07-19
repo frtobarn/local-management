@@ -15,8 +15,33 @@ const App = () => {
   const [isUserModalOpen, setIsUserModalOpen] = useState(false);
   const [isItemModalOpen, setIsItemModalOpen] = useState(false);
   const [showSplash, setShowSplash] = useState(() => {
-    // Solo mostrar splash si no se ha mostrado antes en esta sesión
-    return sessionStorage.getItem('splashShown') !== 'true';
+    // Mostrar splash en nuevas sesiones O en horarios fijos durante la jornada laboral
+    const lastShown = localStorage.getItem('splashLastShown');
+    const sessionShown = sessionStorage.getItem('splashShown');
+    const now = new Date();
+    const currentHour = now.getHours();
+    
+    // Siempre mostrar en nuevas sesiones (sessionStorage)
+    if (!sessionShown) {
+      return true;
+    }
+    
+    // Solo verificar horarios fijos durante horario laboral (8 AM - 8 PM)
+    if (currentHour < 8 || currentHour >= 20) {
+      return false;
+    }
+    
+    if (!lastShown) {
+      // Primera vez durante horario laboral
+      return true;
+    }
+    
+    // Verificar si han pasado más de 3 horas
+    const lastShownTime = new Date(lastShown);
+    const timeDifference = now.getTime() - lastShownTime.getTime();
+    const threeHoursInMs = 3 * 60 * 60 * 1000; // 3 horas en milisegundos
+    
+    return timeDifference >= threeHoursInMs;
   });
   const navigate = useNavigate();
   
@@ -26,7 +51,10 @@ const App = () => {
   const handleSplashComplete = () => {
     setTimeout(() => {
       setShowSplash(false);
+      // Guardar en sessionStorage para nuevas sesiones
       sessionStorage.setItem('splashShown', 'true');
+      // Guardar la fecha actual para horarios fijos
+      localStorage.setItem('splashLastShown', new Date().toISOString());
     }, 3500);
   };
 
